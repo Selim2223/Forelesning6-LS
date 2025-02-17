@@ -1,26 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-</head>
+  </head>
 
+  <body>
+    <h1 id="name-txt">Ditt navn er: Ukjent</h1>
+    <input type="button" id="add-btn" value="Legg til brukernavn!" />
+    <input type="button" id="delete-btn" value="Slett brukernavn." />
 
-<body>
-
-
-
-
-
-
-
-    
     <script>
+      const nameTxt = document.getElementById("name-txt");
+      const addBtn = document.getElementById("add-btn");
+      const deleteBtn = document.getElementById("delete-btn");
+
+      addBtn.onclick = addName;
+      deleteBtn.onclick = deleteName;
+
+      function addName() {
+        const userName = prompt("hva heter du?");
+        localStorage.setItem("name", userName);
+        updateName();
+      }
+
+      function deleteName() {
+        localStorage.removeItem("name");
+        updateName();
+      }
+
+      function updateName() {
+if(localStorage.length <= 0){
+    nameTxt.innerHTML = `Ditt navn er: Ukjent, legg inn brukeren`;
+    } else {
+        nameTxt.innerHTML = `Ditt navn er: ${localStorage.getItem("name")}`;
+
+    }
+      }
+      updateName();
+
 
     </script>
-</body>
-
-
-
+  </body>
 </html>
