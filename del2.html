@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="activity-container"></div>
+    <h3>Alle lagrede aktiviteter:</h3>
+    <div id="saved-activities-container"></div>
+
+    <script>
+      const activityContainer = document.getElementById('activity-container');
+      const savedActivitiesContainer = document.getElementById(
+        'saved-activities-container'
+      );
+
+let activities = [];
+
+      async function fetchActivity() {
+        const request = await fetch('https://www.boredapi.com/api/activity/');
+        const response = await request.json();
+
+        return response;
+      }
+
+      async function fetchAndShowActivity() {
+        try {
+          const activity = await fetchActivity();
+          showActivity(activity);
+          showSavedActivity();
+        } catch {
+          console.log('klarte ikke hente aktivitet...');
+        }
+      }
+      fetchAndShowActivity();
+
+      function showActivity(activity) {
+        console.log('inne i show', activity);
+        const activityCard = document.createElement('div');
+        const text = document.createElement('h4');
+        text.innerHTML = 'Aktivitet: ' + activity.activity;
+
+        activityCard.style.backgroundColor = 'lightblue';
+        activityCard.style.width = '200px';
+        activityCard.style.height = '200px';
+        activityCard.style.border = '1px solid black';
+
+        const saveBtn = document.createElement('button');
+        saveBtn.innerHTML = 'Lagre aktivitet';
+        saveBtn.addEventListener('click', function(){
+            saveActivity()
+        });
+
+        activityCard.append(text, saveBtn);
+        activityContainer.append(activityCard);
+      }
+
+      function saveActivity(activity) {
+        activities = JSON.parse(localStorage.getItem('savedActivities')) || [];
+
+        activities.push(activity);
+
+        localStorage.setItem("savedActivities", JSON.stringify(activities))
+
+        showSavedActivity();
+        
+      }
+
+      function showSavedActivity() {
+        console.log('Lagre aktivitet');
+        activities = JSON.parse(localStorage.getItem('savedActivities')) || [];
+
+        activities.forEach((activity, index) => {
+          const savedActivityCard = document.createElement('div');
+          const savedText = document.createElement('h4');
+          savedText.innerHTML = 'Aktivitet:' + activity.activity;
+
+          savedActivityCard.style.backgroundColor = 'green';
+          savedActivityCard.style.width = '200px';
+          savedActivityCard.style.height = '200px';
+          savedActivityCard.style.border = '1px solid black';
+
+          savedActivityCard.append(savedText);
+          savedActivitiesContainer.append(savedActivityCard);
+        });
+      }
+    </script>
+  </body>
+</html>
+
+
+
+
+// Endret koden som er oppe med Chatgpt
+<!-- <!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hogwarts Staff</title>
+  </head>
+  <body>
+    <div id="character-container"></div>
+    <h3>Сохраненные персонажи:</h3>
+    <div id="saved-characters-container"></div>
+
+    <script>
+      const characterContainer = document.getElementById('character-container');
+      const savedCharactersContainer = document.getElementById('saved-characters-container');
+
+      let savedCharacters = JSON.parse(localStorage.getItem('savedCharacters')) || [];
+
+      async function fetchCharacters() {
+        try {
+          const response = await fetch('https://hp-api.onrender.com/api/characters/staff');
+          const characters = await response.json();
+          return characters;
+        } catch (error) {
+          console.log('Ошибка загрузки персонажей:', error);
+          return [];
+        }
+      }
+
+      async function fetchAndShowCharacter() {
+        const characters = await fetchCharacters();
+        if (characters.length > 0) {
+          const randomCharacter = characters[Math.floor(Math.random() * characters.length)];
+          showCharacter(randomCharacter);
+        }
+      }
+
+      function showCharacter(character) {
+        characterContainer.innerHTML = ''; // Очистка перед показом нового
+
+        const characterCard = document.createElement('div');
+        const name = document.createElement('h4');
+        name.innerHTML = 'Имя: ' + character.name;
+
+        const image = document.createElement('img');
+        image.src = character.image || 'https://via.placeholder.com/150';
+        image.alt = character.name;
+        image.style.width = '150px';
+
+        characterCard.style.backgroundColor = 'lightblue';
+        characterCard.style.width = '200px';
+        characterCard.style.height = '250px';
+        characterCard.style.border = '1px solid black';
+        characterCard.style.textAlign = 'center';
+        characterCard.style.padding = '10px';
+
+        const saveBtn = document.createElement('button');
+        saveBtn.innerHTML = 'Сохранить персонажа';
+        saveBtn.addEventListener('click', function () {
+          saveCharacter(character);
+        });
+
+        characterCard.append(name, image, saveBtn);
+        characterContainer.append(characterCard);
+      }
+
+      function saveCharacter(character) {
+        savedCharacters = JSON.parse(localStorage.getItem('savedCharacters')) || [];
+
+        if (!savedCharacters.some(saved => saved.id === character.id)) {
+          savedCharacters.push(character);
+          localStorage.setItem("savedCharacters", JSON.stringify(savedCharacters));
+          showSavedCharacters();
+        }
+      }
+
+      function showSavedCharacters() {
+        savedCharactersContainer.innerHTML = ''; // Очищаем перед отображением
+
+        savedCharacters.forEach(character => {
+          const savedCharacterCard = document.createElement('div');
+          const savedName = document.createElement('h4');
+          savedName.innerHTML = 'Имя: ' + character.name;
+
+          const savedImage = document.createElement('img');
+          savedImage.src = character.image || 'https://via.placeholder.com/150';
+          savedImage.alt = character.name;
+          savedImage.style.width = '150px';
+
+          savedCharacterCard.style.backgroundColor = 'green';
+          savedCharacterCard.style.width = '200px';
+          savedCharacterCard.style.height = '250px';
+          savedCharacterCard.style.border = '1px solid black';
+          savedCharacterCard.style.textAlign = 'center';
+          savedCharacterCard.style.padding = '10px';
+
+          savedCharacterCard.append(savedName, savedImage);
+          savedCharactersContainer.append(savedCharacterCard);
+        });
+      }
+
+      fetchAndShowCharacter();
+      showSavedCharacters();
+    </script>
+  </body>
+</html> -->
